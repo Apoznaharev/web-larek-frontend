@@ -1,71 +1,77 @@
-export interface Product {
-  id: number;
-  name: string;
-  title: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
+// Тип продукта
+export type Product = {
+	id: number;
+	name: string;
+	title: string;
+	description: string;
+	price: number;
+	image: string;
+	category: string;
 }
 
-export interface ProductList {
-  products: Product[];
+// Тип списка продуктов
+export type ProductList = {
+	products: Product[];
 }
 
-export interface Order {
-  id: number;
-  products: Array<Product>;
-  total: number;
-  status: "pending" | "completed" | "canceled";
-}
-
-// Интерфейс для API-клиента
-export interface ApiClient {
-  getProducts(): Promise<Product[]>;
-  getProductById(id: number): Promise<Product>;
-  createOrder(order: CreateOrderRequest): Promise<Order>;
-}
 
 // Интерфейс для запроса создания заказа
-export interface CreateOrderRequest {
-  payment: "card" | "cash";
-  items: Array<Product>;
-  phone: string;
-  address: string;  
-  email: string;
-  total: number;
+export interface IOrder {
+	payment: 'онлайн' | 'при получении';
+	items: Array<Product>;
+	phone: string;
+	address: string;
+	email: string;
+	total: number;
 }
 
-// Интерфейс для модели продуктов
-export interface ProductModel {
-  fetchProducts(): Promise<Product[]>;
-  fetchProductById(id: number): Promise<Product>;
-}
+// class Order implements IOrder {
+// 	payment: 'card' | 'cash';
+// 	items: Array<Product>;
+// 	phone: string;
+// 	address: string;
+// 	email: string;
+// 	total: number;
 
-// Интерфейс для модели корзины
-export interface OrderModel {
-  addProduct(product: Product): void;
-  removeProduct(productId: number): void;
-  getTotal(): number;
-  getItems(): Array<OrderProduct>;
-}
+// 	constructor(order: Order) {
+// 		this.payment = order.payment;
+// 		this.items = order.items;
+// 		this.phone = order.phone;
+// 		this.address = order.address;
+// 		this.email = order.email;
+// 		this.total = order.total;
+// 	}
+// }
 
-export interface OrderProduct {
-  product: Product;
-  quantity: number;
-}
+// // Интерфейс слушателя событий
+// export interface IEventEmitter {
+// 	on(eventName: string, callback: (data: unknown) => void): void;
+// 	emit(eventName: string, data: unknown): void;
+// 	trigger(eventName: string, context?: unknown): (data: unknown) => void;
+// }
 
-// Интерфейс для компонентов, отображающих список продуктов
-export interface ProductListView {
-  render(products: Product[]): void;
-}
+// // Интерфейс для модели корзины
+// export interface IOrderModel {
+// 	addProduct(product: Product): void;
+// 	removeProduct(productId: number): void;
+// 	calculateTotal(): number;
+// 	getItems(): Array<Product>;
+//   validate(): boolean;
+// }
 
-// Интерфейс для компонента, отображающего детали продукта
-export interface ProductView {
-  render(product: Product): void;
-}
+// //Интерфейс базового класса отображенияx
+// export interface IView {  
+//   buttonActiveState(element: HTMLElement, state: boolean): void;
+// 	render(data?: object): HTMLElement;
+// }
 
-// Интерфейс для корзины
-export interface View {
-  render(OrderProducts: OrderProduct[], total: number): void;
-}
+// // Интерфейс для компонента, отображающего продукт
+// export interface ProductView extends IView {
+	
+// }
+
+// // Интерфейс для компонентов, отображающих список продуктов
+// export interface ProductListView {
+// 	render(products: Product[]): void;
+// }
+
