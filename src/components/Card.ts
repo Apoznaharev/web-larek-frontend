@@ -43,12 +43,18 @@ export class CardBase extends Component<IProduct> {
 		this.setText(this._title, value);
 	}
 
+	set index(value: number) {
+		if (this._index) {
+			this.setText(this._index, (value + 1).toString());
+		}
+	}
+
 	set price(value: number) {
 		this.setText(this._price, value);
 		if (this._button) {
 			if (value === null) {
 				this._button.disabled = true;
-				this._button.textContent = 'Товар бесценен.';
+				this.setText(this._button, 'Товар бесценен.');
 			}
 		}
 	}
@@ -105,10 +111,10 @@ export class Card extends CardBase {
 		if (this._button) {
 			if (value) {
 				this._button.disabled = true;
-				this._button.textContent = 'В корзине';
+				this.setText(this._button, 'В корзине');
 			} else {
 				this._button.disabled = false;
-				this._button.textContent = 'В корзину';
+				this.setText(this._button, 'В корзину');
 			}
 		}
 	}

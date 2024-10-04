@@ -2,8 +2,11 @@ import { IOrder } from '../types';
 import { Component } from './base/Component';
 import { ensureElement, ensureAllElements } from '../utils/utils';
 import { EventEmitter } from './base/events';
+import { Card, CardBase } from './Card';
 
 export class Basket extends Component<IOrder> {
+	cardList: CardBase[] = [];
+
 	protected _list: HTMLElement[];
 	protected _total: HTMLElement;
 	protected _submit: HTMLButtonElement;
@@ -19,31 +22,27 @@ export class Basket extends Component<IOrder> {
 		);
 		this._submit.addEventListener('click', () => {
 			actions.emit('basket:submit', this);
-		});    
+		});
 	}
 
 	set list(items: HTMLElement[]) {
 		this._list.forEach((parent) => parent.append(...items));
 	}
 
-	set total(value: number) {
-		this._total.textContent = value.toString();
-    if (value === 0) {
-      this._submit.disabled = true;
-    } else {
-      this._submit.disabled = false;
-    }
+	get list(): HTMLElement[] {
+		return this._list;
 	}
 
-  listUpdate(items: HTMLElement[]) {
-    this._list.forEach((parent) => parent.replaceChildren(...items));
-  }
+	set total(value: number) {
+		this.setText(this._total, `${value.toString()} синапсов.`);
+		this.setDisabled(this._submit, value === 0);
+	}
 
-	refreshIndices() {
-      this._list.forEach((list) => {
-        list.querySelectorAll(`.basket__item-index`).forEach( (item, index)  => {
-          item.textContent = (index+1).toString()
-        })
-      })
-		}	}
+	listUpdate(items: HTMLElement[]) {
+		this._list.forEach((parent) => parent.replaceChildren(...items));
+	}
 
+	clearCardList() {
+		this.cardList = [];
+	}
+}

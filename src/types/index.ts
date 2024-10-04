@@ -1,6 +1,5 @@
 // Тип способа оплаты
-export type Payment = 'Онлайн' | 'при получении'| null;
-
+export type Payment = 'Онлайн' | 'при получении' | null;
 
 // Интерфейс объекта заказа
 export interface IOrder {
@@ -20,6 +19,5 @@ export interface IProduct {
 	price: number;
 	image: string;
 	category: string;
-  inOrder?: boolean;
+	inOrder?: boolean;
 }
-

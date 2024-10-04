@@ -35,13 +35,13 @@ export class Аddress extends Form<IАddress> {
 			container
 		);
 		const toggleActive = (button: HTMLButtonElement) => () => {
-			this._card.classList.toggle('button_alt-active', button === this._card);
-			this._cash.classList.toggle('button_alt-active', button === this._cash);
+			this.toggleClass(this._card, 'button_alt-active', button === this._card);
+			this.toggleClass(this._cash, 'button_alt-active', button === this._cash);
 			this.checkValid();
 		};
 		this._card.addEventListener('click', toggleActive(this._card));
 		this._cash.addEventListener('click', toggleActive(this._cash));
-		this._address.addEventListener('input', () => this.checkValid()); 
+		this._address.addEventListener('input', () => this.checkValid());
 		this._submit.addEventListener(
 			'click',
 			events.emit.bind(events, 'address:submit', this)
@@ -60,21 +60,22 @@ export class Аddress extends Form<IАddress> {
 	}
 	checkValid() {
 		if (!this._address.value) {
-			this._errors.textContent = 'Укажите ваш адрес.';
+			this.setText(this._errors, 'Укажите ваш адрес.');
 			return (this._submit.disabled = true);
 		}
 		if (!this.container.querySelector('.button_alt-active')) {
-			this._errors.textContent = 'Укажите способ оплаты.';
+			this.setText(this._errors, 'Укажите способ оплаты.');
 			return (this._submit.disabled = true);
 		}
 
-		this._errors.textContent = '';
+		this.setText(this._errors, '');
 		return (this._submit.disabled = false);
 	}
 
 	clearForm() {
 		this._address.value = '';
-		this.container.querySelector('.button_alt-active').classList.remove('button_alt-active');
+		this.toggleClass(this._card, 'button_alt-active', false);
+		this.toggleClass(this._cash, 'button_alt-active', false);
 	}
 }
 
@@ -94,32 +95,32 @@ export class Contact extends Form<IContact> {
 			container
 		);
 		this._email.addEventListener('input', () => this.chekValid());
-    this._phone.addEventListener('input', () => this.chekValid());
-		this._submit.addEventListener(
-			'click',
-			events.emit.bind(events, 'contact:submit', this)
-		);
+		this._phone.addEventListener('input', () => this.chekValid());
+		this._submit.addEventListener('click', (event) => {
+			event.preventDefault();
+			this.events.emit('contact:submit', this);
+		});
 	}
 
-  get phone() {
-    return this._phone.value;
-  }
+	get phone() {
+		return this._phone.value;
+	}
 
-  get email() {
-    return this._email.value;
-  }
-
+	get email() {
+		return this._email.value;
+	}
 
 	chekValid() {
 		if (!this._phone.value) {
-			this._errors.textContent = 'Укажите ваш телефон.';
+			this.setText(this._errors, 'Укажите ваш телефон.');
 			return (this._submit.disabled = true);
 		}
 		if (!this._email.value) {
-			this._errors.textContent = 'Укажите вашу почту.';
+			this.setText(this._errors, 'Укажите вашу почту.');
 			return (this._submit.disabled = true);
 		}
-		this._errors.textContent = '';
+
+		this.setText(this._errors, '');
 		return (this._submit.disabled = false);
 	}
 

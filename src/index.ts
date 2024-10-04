@@ -1,7 +1,7 @@
 import './scss/styles.scss';
 import { API_URL, CDN_URL } from './utils/constants';
 import { EventEmitter } from './components/base/events';
-import { ProductApi } from './components/ProductAPI';
+import { ProductApi, ApiSuccessResponse } from './components/ProductAPI';
 import { ensureElement, cloneTemplate } from './utils/utils';
 import { Card, CardBase } from './components/Card';
 import { IProduct } from './types/index';
@@ -17,9 +17,8 @@ const events = new EventEmitter();
 const api = new ProductApi(CDN_URL, API_URL);
 const page = new Page(document.body, events);
 const order = new Order();
-const counter = ensureElement<HTMLElement>('.header__basket-counter');
 
-//Переменная каталога продуктов и вспомогательная функция получения продукта по id
+//Переменная каталога продуктов и вспомогательные функции
 let productList = [] as IProduct[];
 const getProductById = (id: string) => {
 	return productList.find((item: IProduct) => item.id === id);
@@ -54,10 +53,12 @@ events.on('basket:open', () => {
 	basketView.listUpdate(
 		order.items.map((item: string) => {
 			const card = new CardBase(cloneTemplate(cardBasketTemplate), events);
+			basketView.cardList.push(card);
+			card.index = order.items.indexOf(item);
 			return card.render(getProductById(item));
 		})
 	);
-	basketView.refreshIndices();
+	page.setCounter(order.items.length);
 	modal.render({ content: basketView.render(order) });
 });
 
@@ -65,8 +66,10 @@ events.on('basket:open', () => {
 events.on('basket:deleteProduct', (item: CardBase) => {
 	order.deleteProduct(getProductById(item.id));
 	item.delete();
-	counter.textContent = order.items.length.toString();
-	basketView.refreshIndices();
+	page.setCounter(order.items.length);
+	basketView.cardList.map((card) => {
+		return (card.index = order.items.indexOf(card.id));
+	});
 	basketView.render(order);
 });
 
@@ -88,19 +91,19 @@ events.on('contact:submit', (item: Contact) => {
 	order.email = item.email;
 	api
 		.post('/order', order)
-		.then(() => {
-			order.clearPersonalInfo();
+		.then((data: ApiSuccessResponse) => {
+			modal.render({ content: succsess.render({ description: data.total }) });
 			orderAddress.clearForm();
 			orderContact.clearForm();
-			order.items.forEach((item: string) => {
-				order.deleteProduct(getProductById(item));
+			order.items.map((item: string) => {
+				getProductById(item).inOrder = false;
 			});
-			page.setCounterZero();
+			order.clear();
+			basketView.clearCardList();
+			page.setCounter(order.items.length);
 		})
-		.catch((err) => {
-			console.log(err);
-		});
-	modal.render({ content: succsess.render({ description: order.total }) });
+		.then(() => console.log(order))
+		.catch(console.error);
 });
 
 // Закрытие окна подтверждения покупки
@@ -123,8 +126,9 @@ events.on('card:preview', (item: IProduct) => {
 	const cardFull = new Card(cloneTemplate(cardPreviewTemplate), {
 		onClick: () => {
 			order.addProduct(item);
+			// basketView.cardList.push(new CardBase(cloneTemplate(cardBasketTemplate), events));
 			cardFull.render({ inOrder: true });
-			counter.textContent = order.items.length.toString();
+			page.setCounter(order.items.length);
 		},
 	});
 	modal.render({ content: cardFull.render(item) });
@@ -147,6 +151,4 @@ api
 		productList = data;
 		events.emit('catalog:change', this);
 	})
-	.catch((err) => {
-		console.error(err);
-	});
+	.catch(console.error);

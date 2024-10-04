@@ -3,11 +3,14 @@ import { IProduct } from '../types/index';
 
 export interface IProductApi {
 	getProducts(): Promise<IProduct[]>;
-
 }
 export type ApiResponse<Type> = {
 	total: number;
 	items: Type[];
+};
+export type ApiSuccessResponse = {
+	total: number;
+	id: string;
 }
 
 export interface ApiItemRespone {
@@ -23,7 +26,7 @@ export class ProductApi extends Api implements IProductApi {
 	}
 
 	getProducts(): Promise<IProduct[]> {
-		return this.get('/product').then((data: ApiResponse<IProduct>) => 
+		return this.get('/product').then((data: ApiResponse<IProduct>) =>
 			data.items.map((item) => ({
 				...item,
 				image: this.cdn + item.image,

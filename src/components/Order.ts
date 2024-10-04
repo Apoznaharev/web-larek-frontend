@@ -25,10 +25,12 @@ export class Order implements IOrder {
 		}
 	}
 
-	clearPersonalInfo() {
+	clear() {
 		this.phone = null;
 		this.address = null;
 		this.email = null;
 		this.payment = null;
+		this.items = [];
+		this.total = 0;
 	}
 }
