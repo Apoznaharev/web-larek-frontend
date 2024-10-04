@@ -53,7 +53,7 @@ export class CardBase extends Component<IProduct> {
 		this.setText(this._price, value);
 		if (this._button) {
 			if (value === null) {
-				this._button.disabled = true;
+				this.setDisabled(this._button, true);
 				this.setText(this._button, 'Товар бесценен.');
 			}
 		}
@@ -110,10 +110,10 @@ export class Card extends CardBase {
 	set inOrder(value: boolean) {
 		if (this._button) {
 			if (value) {
-				this._button.disabled = true;
+				this.setDisabled(this._button, true);
 				this.setText(this._button, 'В корзине');
 			} else {
-				this._button.disabled = false;
+				this.setDisabled(this._button, false);
 				this.setText(this._button, 'В корзину');
 			}
 		}

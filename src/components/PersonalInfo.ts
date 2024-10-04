@@ -59,17 +59,11 @@ export class Аddress extends Form<IАddress> {
 		}
 	}
 	checkValid() {
-		if (!this._address.value) {
-			this.setText(this._errors, 'Укажите ваш адрес.');
-			return (this._submit.disabled = true);
-		}
-		if (!this.container.querySelector('.button_alt-active')) {
-			this.setText(this._errors, 'Укажите способ оплаты.');
-			return (this._submit.disabled = true);
-		}
-
-		this.setText(this._errors, '');
-		return (this._submit.disabled = false);
+		const address = !!this._address.value;
+		const payment = !!this.container.querySelector('.button_alt-active');
+		const valid = address && payment;
+		this.setText(this._errors, valid ? '' : 'Укажите адрес и способ оплаты.');
+		return this.setDisabled(this._submit, !valid);
 	}
 
 	clearForm() {
@@ -111,17 +105,12 @@ export class Contact extends Form<IContact> {
 	}
 
 	chekValid() {
-		if (!this._phone.value) {
-			this.setText(this._errors, 'Укажите ваш телефон.');
-			return (this._submit.disabled = true);
-		}
-		if (!this._email.value) {
-			this.setText(this._errors, 'Укажите вашу почту.');
-			return (this._submit.disabled = true);
-		}
-
-		this.setText(this._errors, '');
-		return (this._submit.disabled = false);
+		const phoneValid = !!this._phone.value;
+		const emailValid = !!this._email.value;
+		const error =
+			phoneValid && emailValid ? '' : 'Укажите ваш телефон и почту.';
+		this.setText(this._errors, error);
+		this.setDisabled(this._submit, !(phoneValid && emailValid));
 	}
 
 	clearForm() {
